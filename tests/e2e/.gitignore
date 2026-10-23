@@ -1,0 +1,7 @@
+node_modules
+dist
+shots
+keys.json
+*.pid
+*.log
+admin-users.fn.mts

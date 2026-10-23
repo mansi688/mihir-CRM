@@ -1,0 +1,7 @@
+{
+  "name": "caredesk-e2e",
+  "private": true,
+  "type": "module",
+  "description": "End-to-end test kit: local Supabase stand-in (real Postgres + RLS) and a browser walkthrough of every role",
+  "dependencies": { "@supabase/supabase-js": "2.45.0", "pg": "^8.12.0" }
+}

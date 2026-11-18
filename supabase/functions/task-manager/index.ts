@@ -55,7 +55,7 @@ Deno.serve(async (req) => {
     try { data = await res.json(); } catch { /* empty */ }
     if (!res.ok) {
       const msg = res.status === 401 ? 'The task manager refused the link (secret key mismatch).'
-        : res.status === 503 ? 'The CRM link is not switched on in the task manager yet.'
+        : res.status === 503 || res.status === 404 ? 'The CRM link is not switched on in the task manager yet (it needs the crm-link update and the CRM_INTEGRATION_SECRET setting on Render).'
         : data?.error || `Task manager error (${res.status}).`;
       throw Object.assign(new Error(msg), { status: res.status === 400 ? 400 : 502 });
     }

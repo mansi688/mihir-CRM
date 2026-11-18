@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { createComplaint, getCategories, getEmployees, getMyFlats, listCustomers } from '../../lib/api';
 import { KINDS, PRIORITIES, SOURCES } from '../../lib/constants';
-import { errMsg } from '../../lib/utils';
+import { errMsg, loginName } from '../../lib/utils';
 import PhotoPicker from '../../components/PhotoPicker';
 import Icon from '../../components/Icons';
 import { ErrorBox, Field, FlatPlate, useToast } from '../../components/UI';
@@ -67,7 +67,7 @@ export default function LogComplaint() {
           <h3>Customer</h3>
           {customer ? (
             <div className="spread">
-              <div><div className="strong">{customer.full_name}</div><div className="small muted">{customer.mobile} · {customer.email}</div></div>
+              <div><div className="strong">{customer.full_name}</div><div className="small muted">{customer.mobile} · {loginName(customer.email)}</div></div>
               <button type="button" className="btn ghost sm" onClick={() => { setCustomer(null); setFlats([]); }}>Change</button>
             </div>
           ) : (

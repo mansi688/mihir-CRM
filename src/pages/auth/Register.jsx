@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import { RELATIONS } from '../../lib/constants';
-import { errMsg } from '../../lib/utils';
+import { errMsg, toLoginEmail } from '../../lib/utils';
 import { ErrorBox, Field } from '../../components/UI';
 import FlatPicker from '../../components/FlatPicker';
 import AuthShell, { useProjectFromQuery } from './AuthShell';
@@ -24,27 +24,28 @@ export default function Register() {
     if (mobile.length !== 10) return setError('Enter a valid 10-digit mobile number.');
     if (!flat.flatId) return setError('Select your flat.');
     if (form.password.length < 8) return setError('Password must be at least 8 characters.');
+    const login = toLoginEmail(form.email);
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(login) || login.startsWith('@')) return setError('Choose a username (letters and numbers) or enter your email.');
     setBusy(true);
-    const { data, error } = await supabase.auth.signUp({
-      email: form.email.trim(),
-      password: form.password,
-      options: {
-        emailRedirectTo: `${window.location.origin}/home`,
-        data: { full_name: form.full_name.trim(), mobile, flat_id: flat.flatId, relation: form.relation },
-      },
+    // Accounts are created ready to use (no confirmation email), then signed in.
+    const { data, error } = await supabase.functions.invoke('register', {
+      body: { email: login, password: form.password, full_name: form.full_name.trim(), mobile, flat_id: flat.flatId, relation: form.relation },
     });
+    let msg = error?.message || data?.error;
+    if (error) { try { msg = (await error.context.json()).error || msg; } catch { /* keep */ } }
+    if (msg) { setBusy(false); return setError(errMsg({ message: msg })); }
+    const { error: se } = await supabase.auth.signInWithPassword({ email: login, password: form.password });
     setBusy(false);
-    if (error) return setError(errMsg(error));
-    if (data.session) nav('/home', { replace: true });
-    else setSent(true); // email confirmation is switched on in Supabase
+    if (se) { setSent(true); return; }
+    nav('/home', { replace: true });
   }
 
   if (sent) {
     return (
       <AuthShell project={project}>
-        <h2>Check your email</h2>
+        <h2>Account created</h2>
         <p className="muted" style={{ margin: '8px 0 20px' }}>
-          We sent a confirmation link to <b>{form.email}</b>. Open it on this device to finish setting up your account for {flat.label}.
+          Your account for {flat.label} is ready. Sign in with <b>{form.email}</b> and your password.
         </p>
         <Link className="btn secondary" to="/login">Back to sign in</Link>
       </AuthShell>
@@ -73,8 +74,8 @@ export default function Register() {
         <div className="hr" />
         <FlatPicker onChange={setFlat} projectId={project?.id || ''} />
         <div className="hr" />
-        <Field label="Email">
-          <input className="input" type="email" required autoComplete="email" value={form.email} onChange={set('email')} />
+        <Field label="Username or email" hint="This is what you'll sign in with, e.g. priya or priya@gmail.com">
+          <input className="input" type="text" required autoCapitalize="none" spellCheck={false} autoComplete="username" value={form.email} onChange={set('email')} />
         </Field>
         <Field label="Password" hint="At least 8 characters">
           <input className="input" type="password" required minLength={8} autoComplete="new-password" value={form.password} onChange={set('password')} />

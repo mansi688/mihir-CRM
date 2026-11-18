@@ -38,9 +38,11 @@ Deno.serve(async (req) => {
       const role = body.role || 'customer';
       if (!['customer', 'staff', 'manager', 'admin'].includes(role)) return json({ error: 'Invalid role.' }, 400);
       if (role !== 'customer' && !isAdmin) return json({ error: 'Only admins can add employees.' }, 403);
-      const email = String(body.email || '').trim().toLowerCase();
+      // a plain username becomes <username>@mihir.test (no mailbox needed)
+      const raw = String(body.email || '').trim().toLowerCase();
+      const email = raw.includes('@') ? raw : `${raw.replace(/[^a-z0-9._-]/g, '')}@mihir.test`;
       const password = String(body.password || '');
-      if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return json({ error: 'Enter a valid email.' }, 400);
+      if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return json({ error: 'Enter a username or a valid email.' }, 400);
       if (password.length < 8) return json({ error: 'Password must be at least 8 characters.' }, 400);
       if (!String(body.full_name || '').trim()) return json({ error: 'Name is required.' }, 400);
 

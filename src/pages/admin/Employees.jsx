@@ -3,7 +3,7 @@ import { useAuth } from '../../lib/auth';
 import { adminUsers, getEmployees, getProjects, getTeams, updateProfile } from '../../lib/api';
 import { ROLES, ROLE_LABEL } from '../../lib/constants';
 import { projectColors } from '../../lib/theme';
-import { errMsg, initials } from '../../lib/utils';
+import { errMsg, initials, loginName } from '../../lib/utils';
 import { Empty, ErrorBox, Field, Loading, Modal, useToast } from '../../components/UI';
 
 export default function Employees() {
@@ -34,7 +34,7 @@ export default function Employees() {
               <tbody>
                 {rows.map((e) => (
                   <tr key={e.id}>
-                    <td><div className="row" style={{ gap: 10 }}><span className="avatar">{initials(e.full_name)}</span><div><div className="strong">{e.full_name}</div><div className="tiny muted">{e.designation || ''} {e.mobile ? `· ${e.mobile}` : ''}</div><div className="tiny muted">{e.email}</div></div></div></td>
+                    <td><div className="row" style={{ gap: 10 }}><span className="avatar">{initials(e.full_name)}</span><div><div className="strong">{e.full_name}</div><div className="tiny muted">{e.designation || ''} {e.mobile ? `· ${e.mobile}` : ''}</div><div className="tiny muted">{loginName(e.email)}</div></div></div></td>
                     <td>{ROLE_LABEL[e.role]}</td>
                     <td className="small">{e.team?.name || <span className="faint">—</span>}</td>
                     <td>
@@ -98,7 +98,7 @@ function EmployeeModal({ emp, teams, projects, self, onClose, onDone }) {
       <div className="grid-2">
         <Field label="Full name"><input className="input" value={f.full_name} onChange={set('full_name')} /></Field>
         <Field label="Mobile" hint="Gets WhatsApp task alerts"><input className="input" type="tel" value={f.mobile} onChange={set('mobile')} /></Field>
-        {isNew && <Field label="Email (login ID)"><input className="input" type="email" value={f.email} onChange={set('email')} /></Field>}
+        {isNew && <Field label="Username or email (login ID)" hint="e.g. rohan — they sign in with this"><input className="input" autoCapitalize="none" value={f.email} onChange={set('email')} /></Field>}
         {isNew && <Field label="Temporary password"><input className="input" value={f.password} onChange={set('password')} /></Field>}
         <Field label="Role">
           <select className="input" value={f.role} onChange={set('role')} disabled={self}>

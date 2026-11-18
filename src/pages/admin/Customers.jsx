@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { adminUsers, linkFlat, listCustomers, setFlatVerified, unlinkFlat } from '../../lib/api';
 import { RELATIONS } from '../../lib/constants';
-import { downloadCSV, errMsg, fmtDate } from '../../lib/utils';
+import { downloadCSV, errMsg, fmtDate, loginName } from '../../lib/utils';
 import FlatPicker from '../../components/FlatPicker';
 import ProjectSwitch from '../../components/ProjectSwitch';
 import Icon from '../../components/Icons';
@@ -41,7 +41,7 @@ export default function Customers() {
       const all = await listCustomers({ search: q, pageSize: 5000, projectId: project, unverified });
       const rows = all.data.flatMap((c) => (c.customer_flats.length ? c.customer_flats : [null]).map((cf) => ({ c, cf })));
       downloadCSV(`customers-${new Date().toISOString().slice(0, 10)}.csv`, rows, [
-        { label: 'Name', value: (r) => r.c.full_name }, { label: 'Mobile', value: (r) => r.c.mobile }, { label: 'Email', value: (r) => r.c.email },
+        { label: 'Name', value: (r) => r.c.full_name }, { label: 'Mobile', value: (r) => r.c.mobile }, { label: 'Email', value: (r) => loginName(r.c.email) },
         { label: 'Project', value: (r) => r.cf?.flat.wing.tower.project.name }, { label: 'Tower', value: (r) => r.cf?.flat.wing.tower.name },
         { label: 'Wing', value: (r) => r.cf?.flat.wing.name }, { label: 'Flat', value: (r) => r.cf?.flat.flat_no },
         { label: 'Relation', value: (r) => r.cf?.relation }, { label: 'Verified', value: (r) => (r.cf?.verified ? 'Yes' : 'No') },
@@ -74,7 +74,7 @@ export default function Customers() {
               <tbody>
                 {data.data.map((c) => (
                   <tr key={c.id}>
-                    <td><div className="strong">{c.full_name}</div><div className="tiny muted">{c.mobile || '—'} · {c.email}</div></td>
+                    <td><div className="strong">{c.full_name}</div><div className="tiny muted">{c.mobile || '—'} · {loginName(c.email)}</div></td>
                     <td>
                       <div className="stack" style={{ gap: 6 }}>
                         {c.customer_flats.map((cf) => (
@@ -130,7 +130,7 @@ function AddCustomer({ onClose, onDone }) {
       <div className="grid-2">
         <Field label="Full name"><input className="input" value={f.full_name} onChange={set('full_name')} /></Field>
         <Field label="Mobile"><input className="input" type="tel" value={f.mobile} onChange={set('mobile')} /></Field>
-        <Field label="Email (login ID)"><input className="input" type="email" value={f.email} onChange={set('email')} /></Field>
+        <Field label="Username or email (login ID)" hint="e.g. rohan — they sign in with this"><input className="input" autoCapitalize="none" value={f.email} onChange={set('email')} /></Field>
         <Field label="Temporary password" hint="Share with the customer; they can change it in Profile"><input className="input" value={f.password} onChange={set('password')} /></Field>
       </div>
       <FlatPicker onChange={setFlat} required={false} />

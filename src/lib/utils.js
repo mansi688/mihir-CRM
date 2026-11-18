@@ -104,3 +104,15 @@ export function flatCode(c) {
 export function uid() {
   return (crypto.randomUUID && crypto.randomUUID()) || Math.random().toString(36).slice(2) + Date.now().toString(36);
 }
+
+// Simple usernames: "priya" signs in as priya@mihir.test (no real mailbox needed).
+// A full email address is used as-is.
+export const LOGIN_DOMAIN = 'mihir.test';
+export function toLoginEmail(id = '') {
+  const v = String(id).trim().toLowerCase();
+  if (v.includes('@')) return v;
+  return `${v.replace(/[^a-z0-9._-]/g, '')}@${LOGIN_DOMAIN}`;
+}
+export function loginName(email = '') {
+  return email && email.endsWith(`@${LOGIN_DOMAIN}`) ? email.slice(0, -LOGIN_DOMAIN.length - 1) : email;
+}

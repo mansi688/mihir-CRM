@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
-import { errMsg } from '../../lib/utils';
+import { errMsg, toLoginEmail } from '../../lib/utils';
 import { ErrorBox, Field } from '../../components/UI';
 import AuthShell, { useProjectFromQuery } from './AuthShell';
 
@@ -16,7 +16,7 @@ export default function Login() {
   async function submit(e) {
     e.preventDefault();
     setBusy(true); setError('');
-    const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
+    const { error } = await supabase.auth.signInWithPassword({ email: toLoginEmail(email), password });
     setBusy(false);
     if (error) return setError(errMsg(error));
     nav('/home', { replace: true });
@@ -28,8 +28,8 @@ export default function Login() {
       <p className="muted" style={{ marginBottom: 24 }}>Residents and staff use the same sign-in.</p>
       <form className="stack" onSubmit={submit}>
         <ErrorBox error={error} />
-        <Field label="Email">
-          <input className="input" type="email" autoComplete="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
+        <Field label="Username or email">
+          <input className="input" type="text" autoComplete="username" autoCapitalize="none" spellCheck={false} required placeholder="e.g. priya" value={email} onChange={(e) => setEmail(e.target.value)} />
         </Field>
         <Field label="Password">
           <input className="input" type="password" autoComplete="current-password" required value={password} onChange={(e) => setPassword(e.target.value)} />

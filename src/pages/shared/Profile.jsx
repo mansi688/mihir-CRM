@@ -4,7 +4,7 @@ import { useAuth } from '../../lib/auth';
 import { supabase } from '../../lib/supabase';
 import { updateProfile } from '../../lib/api';
 import { ROLE_LABEL } from '../../lib/constants';
-import { errMsg } from '../../lib/utils';
+import { errMsg, loginName } from '../../lib/utils';
 import { ErrorBox, Field, useToast } from '../../components/UI';
 
 export default function Profile() {
@@ -39,7 +39,7 @@ export default function Profile() {
 
   return (
     <div className="page narrow">
-      <div className="page-head"><div><h1>My profile</h1><p>{ROLE_LABEL[profile.role]}{profile.team ? ` · ${profile.team.name}` : ''} · {user.email}</p></div></div>
+      <div className="page-head"><div><h1>My profile</h1><p>{ROLE_LABEL[profile.role]}{profile.team ? ` · ${profile.team.name}` : ''} · Login: {loginName(user.email)}</p></div></div>
       <form className="panel panel-pad stack" onSubmit={save}>
         <ErrorBox error={error} />
         <Field label="Full name"><input className="input" required value={name} onChange={(e) => setName(e.target.value)} /></Field>

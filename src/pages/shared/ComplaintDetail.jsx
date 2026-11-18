@@ -9,6 +9,7 @@ import { ACTIVE_STATUSES, KIND_LABEL, PRIORITIES, SOURCES, STATUSES } from '../.
 import { dueText, errMsg, fmtDateTime, hoursBetween, isOverdue, toLocalInput } from '../../lib/utils';
 import Timeline, { StatusRail } from '../../components/Timeline';
 import PhotoPicker from '../../components/PhotoPicker';
+import TaskManagerPanel from '../../components/TaskManagerPanel';
 import Icon from '../../components/Icons';
 import {
   ErrorBox, Field, FlatPlate, Loading, Modal, OverdueBadge, PriorityBadge, Stars, StatusBadge, useToast,
@@ -168,6 +169,7 @@ export default function ComplaintDetail() {
               onSave={(patch, msg) => run(() => updateComplaint(c.id, patch), msg)}
               onStatus={(s, note) => run(() => setStatus(c.id, s, note), 'Status updated')} />
           )}
+          {isManager && <TaskManagerPanel c={c} onLinked={load} />}
           {isAdmin && (
             <button className="btn danger secondary" onClick={() => {
               if (window.confirm(`Delete ${c.complaint_no} permanently? This also deletes its history.`)) {

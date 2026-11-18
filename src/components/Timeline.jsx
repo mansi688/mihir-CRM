@@ -12,6 +12,7 @@ function describe(u) {
     case 'due_date': return { icon: 'clock', text: <>Deadline changed to <b>{fmtDateTime(u.to_value)}</b></> };
     case 'reopened': return { icon: 'refresh', text: <b>Reopened</b>, bubble: u.message, cls: 'alert' };
     case 'rating':   return { icon: 'star', text: <span className="row" style={{ gap: 6 }}>Rated <Stars value={Number(u.to_value)} read /></span>, bubble: u.message };
+    case 'task_manager': return { icon: 'list', text: u.message || 'Added to Mihir Task Manager', cls: 'internal' };
     case 'overdue':  return { icon: 'alert', text: u.message || 'Deadline missed', cls: 'alert' };
     case 'comment':  return { icon: 'message', text: u.is_internal ? 'added an internal note' : 'wrote', bubble: u.message, cls: u.is_internal ? 'internal' : 'comment' };
     default:         return { icon: 'flag', text: u.message || u.type };

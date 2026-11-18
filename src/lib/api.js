@@ -195,3 +195,15 @@ export async function listEnquiries({ status = '', projectId = '', page = 0, pag
   return must(await q);
 }
 export const updateEnquiry = async (id, patch) => must(await supabase.from('enquiries').update(patch).eq('id', id));
+
+// ---------------- Mihir Task Manager link ----------------
+export async function taskManager(payload) {
+  const { data, error } = await supabase.functions.invoke('task-manager', { body: payload });
+  if (error) {
+    let msg = error.message;
+    try { msg = (await error.context.json()).error || msg; } catch { /* keep default */ }
+    throw new Error(msg);
+  }
+  if (data?.error) throw new Error(data.error);
+  return data;
+}

@@ -781,3 +781,12 @@ a:hover { color: var(--accent-hover); }
 .choice .plate .f { flex: none; }
 .photo-add > span { display: flex; flex-direction: column; align-items: center; gap: 4px; }
 .photo-add > span svg { margin: 0; }
+
+/* people picker in "Add as task to Mihir Task Manager" */
+.tm-people { max-height: 260px; overflow-y: auto; border: 1px solid var(--line); border-radius: var(--r); display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
+.tm-person { display: flex; gap: 10px; align-items: flex-start; padding: 9px 12px; border-bottom: 1px solid #efece6; cursor: pointer; font-size: 0.88rem; }
+.tm-person:hover { background: #fbfaf7; }
+.tm-person.on { background: var(--amber-soft); }
+.tm-person input { margin-top: 3px; accent-color: var(--graphite); }
+.tm-person span { display: flex; flex-direction: column; min-width: 0; }
+.tm-person small { color: var(--muted); font-size: 0.76rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
